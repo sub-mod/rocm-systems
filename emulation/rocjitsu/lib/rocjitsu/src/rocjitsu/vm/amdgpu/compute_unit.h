@@ -459,19 +459,28 @@ public:
 
   /// @brief Set the execution plugin group (shared ownership).
   /// @details Replacement refreshes resident waves' hot-hook subscriptions but
-  /// does not replay dispatch callbacks or migrate or clear wave-local plugin
-  /// state. Stateful plugins must tolerate missing initialization and state
-  /// left in a reused slot when attached to an already-resident wave.
+  /// does not replay dispatch callbacks. It invalidates the old group's active
+  /// dispatch observations even when no wave is resident, then clears retained
+  /// wave-local state. Stateful replacement plugins must tolerate resident
+  /// waves they did not initialize.
   void set_plugin_group(std::shared_ptr<ExecutionPluginGroup> pg) {
     std::lock_guard<std::recursive_mutex> lock(wave_state_mutex_);
     auto replacement = pg ? std::move(pg) : ExecutionPluginGroup::empty_group();
     if (plugin_group_.get() != replacement.get()) {
+      // Dispatch-scoped observations can span gaps where no wave is resident,
+      // so notify the outgoing group once independently of wave-local state.
+      plugin_group_->onAmdgpuPluginGroupDetached();
       // A resident wave's cached decisions belong to the group that observed
-      // its dispatch. A replacement group may have the same plugin count but
-      // different per-wave subscriptions, so force it onto the live-query path.
+      // its dispatch, as does every retained plugin-state slot. Slot indices
+      // restart in each group, so discard the old state before the replacement
+      // can query or populate the same index and force it onto the live-query
+      // path. Stateful replacement plugins remain unsubscribed from resident
+      // waves until a normal dispatch callback initializes their state.
       for (const auto &wf : wfs_) {
         if (!wf)
           continue;
+        plugin_group_->onAmdgpuWavefrontStateInvalidated(*wf);
+        wf->clear_plugin_states();
         wf->hot_hook_subscriptions_valid_ = false;
         wf->hot_hook_observer_count_ = 0;
       }
