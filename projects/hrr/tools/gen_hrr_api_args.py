@@ -1464,6 +1464,7 @@ _ENUM_TYPES = {
     "hipGraphMemAttributeType", "hipJitInputType",
     "hipMemAllocationHandleType", "hipMemRangeHandleType",
     "hipPointer_attribute", "hipStreamAttrID", "hipGLDeviceList",
+    "hipExecAffinityType",
 }
 
 # Scalar type map: normalised type string -> C field type
