@@ -4466,9 +4466,9 @@ inline void execute_v_cmp_eq_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Eq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -4488,9 +4488,8 @@ inline void execute_v_cmp_eq_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Eq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -4513,9 +4512,9 @@ inline void execute_v_cmp_eq_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Eq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -4535,9 +4534,8 @@ inline void execute_v_cmp_eq_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Eq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -4560,9 +4558,9 @@ inline void execute_v_cmp_eq_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Eq>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -4582,9 +4580,8 @@ inline void execute_v_cmp_eq_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Eq>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5042,9 +5039,9 @@ inline void execute_v_cmp_ge_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Ge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5064,9 +5061,8 @@ inline void execute_v_cmp_ge_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Ge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5089,9 +5085,9 @@ inline void execute_v_cmp_ge_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Ge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5111,9 +5107,8 @@ inline void execute_v_cmp_ge_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Ge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5136,9 +5131,9 @@ inline void execute_v_cmp_ge_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Ge>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5158,9 +5153,8 @@ inline void execute_v_cmp_ge_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Ge>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5374,9 +5368,9 @@ inline void execute_v_cmp_gt_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Gt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5396,9 +5390,8 @@ inline void execute_v_cmp_gt_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Gt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5421,9 +5414,9 @@ inline void execute_v_cmp_gt_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Gt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5443,9 +5436,8 @@ inline void execute_v_cmp_gt_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Gt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5468,9 +5460,9 @@ inline void execute_v_cmp_gt_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Gt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5490,9 +5482,8 @@ inline void execute_v_cmp_gt_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Gt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5706,9 +5697,9 @@ inline void execute_v_cmp_le_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Le>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5728,9 +5719,8 @@ inline void execute_v_cmp_le_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Le>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5753,9 +5743,9 @@ inline void execute_v_cmp_le_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Le>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5775,9 +5765,8 @@ inline void execute_v_cmp_le_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Le>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -5800,9 +5789,9 @@ inline void execute_v_cmp_le_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Le>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -5822,9 +5811,8 @@ inline void execute_v_cmp_le_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Le>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6038,9 +6026,9 @@ inline void execute_v_cmp_lg_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Lg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6060,9 +6048,8 @@ inline void execute_v_cmp_lg_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Lg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6085,9 +6072,9 @@ inline void execute_v_cmp_lg_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Lg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6107,9 +6094,8 @@ inline void execute_v_cmp_lg_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Lg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6132,9 +6118,9 @@ inline void execute_v_cmp_lg_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Lg>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6154,9 +6140,8 @@ inline void execute_v_cmp_lg_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Lg>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6179,9 +6164,9 @@ inline void execute_v_cmp_lt_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Lt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6201,9 +6186,8 @@ inline void execute_v_cmp_lt_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Lt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6226,9 +6210,9 @@ inline void execute_v_cmp_lt_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Lt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6248,9 +6232,8 @@ inline void execute_v_cmp_lt_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Lt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6273,9 +6256,9 @@ inline void execute_v_cmp_lt_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Lt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6295,9 +6278,8 @@ inline void execute_v_cmp_lt_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unuse
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Lt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6702,9 +6684,9 @@ inline void execute_v_cmp_neq_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Neq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6725,9 +6707,8 @@ inline void execute_v_cmp_neq_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Neq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6750,9 +6731,9 @@ inline void execute_v_cmp_neq_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Neq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6773,9 +6754,8 @@ inline void execute_v_cmp_neq_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Neq>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6798,9 +6778,9 @@ inline void execute_v_cmp_neq_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Neq>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6821,9 +6801,8 @@ inline void execute_v_cmp_neq_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Neq>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6846,9 +6825,9 @@ inline void execute_v_cmp_nge_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6869,9 +6848,8 @@ inline void execute_v_cmp_nge_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6894,9 +6872,9 @@ inline void execute_v_cmp_nge_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6917,9 +6895,8 @@ inline void execute_v_cmp_nge_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nge>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6942,9 +6919,9 @@ inline void execute_v_cmp_nge_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nge>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -6965,9 +6942,8 @@ inline void execute_v_cmp_nge_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nge>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -6990,9 +6966,9 @@ inline void execute_v_cmp_ngt_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Ngt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7013,9 +6989,8 @@ inline void execute_v_cmp_ngt_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Ngt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7038,9 +7013,9 @@ inline void execute_v_cmp_ngt_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Ngt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7061,9 +7036,8 @@ inline void execute_v_cmp_ngt_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Ngt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7086,9 +7060,9 @@ inline void execute_v_cmp_ngt_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Ngt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7109,9 +7083,8 @@ inline void execute_v_cmp_ngt_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Ngt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7134,9 +7107,9 @@ inline void execute_v_cmp_nle_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nle>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7157,9 +7130,8 @@ inline void execute_v_cmp_nle_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nle>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7182,9 +7154,9 @@ inline void execute_v_cmp_nle_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nle>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7205,9 +7177,8 @@ inline void execute_v_cmp_nle_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nle>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7230,9 +7201,9 @@ inline void execute_v_cmp_nle_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nle>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7253,9 +7224,8 @@ inline void execute_v_cmp_nle_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nle>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7278,9 +7248,9 @@ inline void execute_v_cmp_nlg_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nlg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7301,9 +7271,8 @@ inline void execute_v_cmp_nlg_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nlg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7326,9 +7295,9 @@ inline void execute_v_cmp_nlg_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nlg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7349,9 +7318,8 @@ inline void execute_v_cmp_nlg_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nlg>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7374,9 +7342,9 @@ inline void execute_v_cmp_nlg_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nlg>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7397,9 +7365,8 @@ inline void execute_v_cmp_nlg_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nlg>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7422,9 +7389,9 @@ inline void execute_v_cmp_nlt_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nlt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7445,9 +7412,8 @@ inline void execute_v_cmp_nlt_f16_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::Nlt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7470,9 +7436,9 @@ inline void execute_v_cmp_nlt_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nlt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7493,9 +7459,8 @@ inline void execute_v_cmp_nlt_f32_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::Nlt>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7518,9 +7483,9 @@ inline void execute_v_cmp_nlt_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unus
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nlt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7541,9 +7506,8 @@ inline void execute_v_cmp_nlt_f64_vopc([[maybe_unused]] Inst &inst,
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::Nlt>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7566,9 +7530,9 @@ inline void execute_v_cmp_o_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::O>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7588,9 +7552,8 @@ inline void execute_v_cmp_o_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::O>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7613,9 +7576,9 @@ inline void execute_v_cmp_o_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::O>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7635,9 +7598,8 @@ inline void execute_v_cmp_o_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::O>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -7660,9 +7622,9 @@ inline void execute_v_cmp_o_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::O>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -7682,9 +7644,8 @@ inline void execute_v_cmp_o_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::O>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -8025,9 +7986,9 @@ inline void execute_v_cmp_u_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::U>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -8047,9 +8008,8 @@ inline void execute_v_cmp_u_f16_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F16, amdgpu::comparison::U>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -8072,9 +8032,9 @@ inline void execute_v_cmp_u_f32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::U>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -8094,9 +8054,8 @@ inline void execute_v_cmp_u_f32_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F32, amdgpu::comparison::U>(
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            static_cast<uint32_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -8119,9 +8078,9 @@ inline void execute_v_cmp_u_f64_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::U>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)),
-            inst.inst_.abs, inst.inst_.neg, compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane), inst.inst_.abs, inst.inst_.neg,
+            compare_policy))
       vcc |= (1ULL << lane);
   }
   commit_result(vcc);
@@ -8141,9 +8100,8 @@ inline void execute_v_cmp_u_f64_vopc([[maybe_unused]] Inst &inst, [[maybe_unused
     if (!(exec & (1ULL << lane)))
       continue;
     if (amdgpu::comparison::evaluate<amdgpu::comparison::F64, amdgpu::comparison::U>(
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            static_cast<uint64_t>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)),
-            compare_policy))
+            amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane), compare_policy))
       vcc |= (1ULL << lane);
   }
   wf.set_vcc_mask(vcc);
@@ -14219,43 +14177,25 @@ inline void execute_v_max3_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]
 template <typename Inst>
 inline void execute_v_max3_num_f32_vop3([[maybe_unused]] Inst &inst,
                                         [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32(
-      [](auto a, auto b, auto c) { return util::stdx::fmax(util::stdx::fmax(a, b), c); });
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Max3Num>(
+        compare_policy, a, b, c);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmax(std::fmax(
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                                      if (inst.inst_.abs & (1u << 0))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 0))
-                                        sv = -sv;
-                                      return sv;
-                                    }(),
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                                      if (inst.inst_.abs & (1u << 1))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 1))
-                                        sv = -sv;
-                                      return sv;
-                                    }()),
-                                [&]() {
-                                  float sv = std::bit_cast<float>(
-                                      amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                                  if (inst.inst_.abs & (1u << 2))
-                                    sv = std::fabs(sv);
-                                  if (inst.inst_.neg & (1u << 2))
-                                    sv = -sv;
-                                  return sv;
-                                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Max3Num>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -14570,50 +14510,45 @@ inline void execute_v_max_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
 template <typename Inst>
 inline void execute_v_max_num_f32_vop2([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP2_BINARY(float32_t, [](auto a, auto b) { return util::stdx::fmax(a, b); });
+  ROCJITSU_TRY_SIMD_VOP2_BINARY(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane,
-        std::bit_cast<uint32_t>(std::fmax(
-            std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)))));
+        amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxNum>(
+            compare_policy, amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)));
   }
 }
 
 template <typename Inst>
 inline void execute_v_max_num_f32_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t,
-                                   [](auto a, auto b) { return util::stdx::fmax(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                   wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmax(
-                [&]() {
-                  float sv =
-                      std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                  if (inst.inst_.abs & (1u << 0))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 0))
-                    sv = -sv;
-                  return sv;
-                }(),
-                [&]() {
-                  float sv =
-                      std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                  if (inst.inst_.abs & (1u << 1))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 1))
-                    sv = -sv;
-                  return sv;
-                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -14628,49 +14563,45 @@ inline void execute_v_max_num_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_max_num_f64_vop2([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP2_BINARY_FP64([](auto a, auto b) { return util::stdx::fmax(a, b); });
+  ROCJITSU_TRY_SIMD_VOP2_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MaxNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane,
-        std::bit_cast<uint64_t>(std::fmax(
-            std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)))));
+        amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MaxNum>(
+            compare_policy, amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)));
   }
 }
 
 template <typename Inst>
 inline void execute_v_max_num_f64_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([](auto a, auto b) { return util::stdx::fmax(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MaxNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint64_t>([&]() {
           double v = [&]() {
-            double v = std::fmax(
-                [&]() {
-                  double sv = std::bit_cast<double>(
-                      amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane));
-                  if (inst.inst_.abs & (1u << 0))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 0))
-                    sv = -sv;
-                  return sv;
-                }(),
-                [&]() {
-                  double sv = std::bit_cast<double>(
-                      amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane));
-                  if (inst.inst_.abs & (1u << 1))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 1))
-                    sv = -sv;
-                  return sv;
-                }());
+            double v = std::bit_cast<double>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MaxNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)));
             const uint32_t effective_omod = amdgpu::fp_mode::effective_omod(
                 wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode(), inst.inst_.omod);
             if (effective_omod == 1)
@@ -14752,49 +14683,25 @@ inline void execute_v_max_u32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
 template <typename Inst>
 inline void execute_v_maximum3_f32_vop3([[maybe_unused]] Inst &inst,
                                         [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([](auto a, auto b, auto c) {
-    return util::ieee_maximum_simd(util::ieee_maximum_simd(a, b), c);
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Maximum3>(
+        compare_policy, a, b, c);
   });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              auto c = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                if (inst.inst_.abs & (1u << 2))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 2))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b) || std::isnan(c))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              auto ab = (a == b) ? (std::signbit(a) ? b : a) : (a > b ? a : b);
-              return (ab == c) ? (std::signbit(ab) ? c : ab) : (ab > c ? ab : c);
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Maximum3>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -14809,40 +14716,24 @@ inline void execute_v_maximum3_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_maximum_f32_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t,
-                                   [](auto a, auto b) { return util::ieee_maximum_simd(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                   wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Maximum>(
+        compare_policy, a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              if (a == b)
-                return std::signbit(a) ? b : a;
-              return a > b ? a : b;
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Maximum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -14857,39 +14748,24 @@ inline void execute_v_maximum_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_maximum_f64_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([](auto a, auto b) { return util::ieee_maximum_simd(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::Maximum>(
+        compare_policy, a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint64_t>([&]() {
           double v = [&]() {
-            double v = [&]() {
-              auto a = [&]() {
-                double sv =
-                    std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                double sv =
-                    std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              if (a == b)
-                return std::signbit(a) ? b : a;
-              return a > b ? a : b;
-            }();
+            double v = std::bit_cast<double>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::Maximum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)));
             const uint32_t effective_omod = amdgpu::fp_mode::effective_omod(
                 wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode(), inst.inst_.omod);
             if (effective_omod == 1)
@@ -14911,49 +14787,25 @@ inline void execute_v_maximum_f64_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_maximumminimum_f32_vop3([[maybe_unused]] Inst &inst,
                                               [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([](auto a, auto b, auto c) {
-    return util::ieee_minimum_simd(util::ieee_maximum_simd(a, b), c);
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaximumMinimum>(
+        compare_policy, a, b, c);
   });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              auto c = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                if (inst.inst_.abs & (1u << 2))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 2))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b) || std::isnan(c))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              auto ab = (a == b) ? (std::signbit(a) ? b : a) : (a > b ? a : b);
-              return (ab == c) ? (std::signbit(ab) ? ab : c) : (ab < c ? ab : c);
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaximumMinimum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -15033,43 +14885,25 @@ inline void execute_v_maxmin_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
 template <typename Inst>
 inline void execute_v_maxmin_num_f32_vop3([[maybe_unused]] Inst &inst,
                                           [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32(
-      [](auto a, auto b, auto c) { return util::stdx::fmin(util::stdx::fmax(a, b), c); });
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxMinNum>(
+        compare_policy, a, b, c);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmin(std::fmax(
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                                      if (inst.inst_.abs & (1u << 0))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 0))
-                                        sv = -sv;
-                                      return sv;
-                                    }(),
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                                      if (inst.inst_.abs & (1u << 1))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 1))
-                                        sv = -sv;
-                                      return sv;
-                                    }()),
-                                [&]() {
-                                  float sv = std::bit_cast<float>(
-                                      amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                                  if (inst.inst_.abs & (1u << 2))
-                                    sv = std::fabs(sv);
-                                  if (inst.inst_.neg & (1u << 2))
-                                    sv = -sv;
-                                  return sv;
-                                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MaxMinNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -15295,42 +15129,19 @@ template <typename Inst>
 inline void execute_v_med3_num_f32_vop3([[maybe_unused]] Inst &inst,
                                         [[maybe_unused]] Wavefront &wf) {
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              auto c = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                if (inst.inst_.abs & (1u << 2))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 2))
-                  sv = -sv;
-                return sv;
-              }();
-              return std::fmax(std::fmin(std::fmax(a, b), c), std::fmin(a, b));
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Med3Num>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -15543,43 +15354,25 @@ inline void execute_v_min3_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]
 template <typename Inst>
 inline void execute_v_min3_num_f32_vop3([[maybe_unused]] Inst &inst,
                                         [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32(
-      [](auto a, auto b, auto c) { return util::stdx::fmin(util::stdx::fmin(a, b), c); });
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Min3Num>(
+        compare_policy, a, b, c);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmin(std::fmin(
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                                      if (inst.inst_.abs & (1u << 0))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 0))
-                                        sv = -sv;
-                                      return sv;
-                                    }(),
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                                      if (inst.inst_.abs & (1u << 1))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 1))
-                                        sv = -sv;
-                                      return sv;
-                                    }()),
-                                [&]() {
-                                  float sv = std::bit_cast<float>(
-                                      amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                                  if (inst.inst_.abs & (1u << 2))
-                                    sv = std::fabs(sv);
-                                  if (inst.inst_.neg & (1u << 2))
-                                    sv = -sv;
-                                  return sv;
-                                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Min3Num>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -15894,50 +15687,45 @@ inline void execute_v_min_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
 template <typename Inst>
 inline void execute_v_min_num_f32_vop2([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP2_BINARY(float32_t, [](auto a, auto b) { return util::stdx::fmin(a, b); });
+  ROCJITSU_TRY_SIMD_VOP2_BINARY(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane,
-        std::bit_cast<uint32_t>(std::fmin(
-            std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane)),
-            std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)))));
+        amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinNum>(
+            compare_policy, amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)));
   }
 }
 
 template <typename Inst>
 inline void execute_v_min_num_f32_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t,
-                                   [](auto a, auto b) { return util::stdx::fmin(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                   wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmin(
-                [&]() {
-                  float sv =
-                      std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                  if (inst.inst_.abs & (1u << 0))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 0))
-                    sv = -sv;
-                  return sv;
-                }(),
-                [&]() {
-                  float sv =
-                      std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                  if (inst.inst_.abs & (1u << 1))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 1))
-                    sv = -sv;
-                  return sv;
-                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -15952,49 +15740,45 @@ inline void execute_v_min_num_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_min_num_f64_vop2([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP2_BINARY_FP64([](auto a, auto b) { return util::stdx::fmin(a, b); });
+  ROCJITSU_TRY_SIMD_VOP2_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MinNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane,
-        std::bit_cast<uint64_t>(std::fmin(
-            std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane)),
-            std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)))));
+        amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MinNum>(
+            compare_policy, amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+            amdgpu::RegisterAccess(wf).read_lane64(inst.vsrc1, lane)));
   }
 }
 
 template <typename Inst>
 inline void execute_v_min_num_f64_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([](auto a, auto b) { return util::stdx::fmin(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MinNum>(compare_policy,
+                                                                                     a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint64_t>([&]() {
           double v = [&]() {
-            double v = std::fmin(
-                [&]() {
-                  double sv = std::bit_cast<double>(
-                      amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane));
-                  if (inst.inst_.abs & (1u << 0))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 0))
-                    sv = -sv;
-                  return sv;
-                }(),
-                [&]() {
-                  double sv = std::bit_cast<double>(
-                      amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane));
-                  if (inst.inst_.abs & (1u << 1))
-                    sv = std::fabs(sv);
-                  if (inst.inst_.neg & (1u << 1))
-                    sv = -sv;
-                  return sv;
-                }());
+            double v = std::bit_cast<double>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::MinNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)));
             const uint32_t effective_omod = amdgpu::fp_mode::effective_omod(
                 wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode(), inst.inst_.omod);
             if (effective_omod == 1)
@@ -16076,49 +15860,25 @@ inline void execute_v_min_u32_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
 template <typename Inst>
 inline void execute_v_minimum3_f32_vop3([[maybe_unused]] Inst &inst,
                                         [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([](auto a, auto b, auto c) {
-    return util::ieee_minimum_simd(util::ieee_minimum_simd(a, b), c);
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Minimum3>(
+        compare_policy, a, b, c);
   });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              auto c = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                if (inst.inst_.abs & (1u << 2))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 2))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b) || std::isnan(c))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              auto ab = (a == b) ? (std::signbit(a) ? a : b) : (a < b ? a : b);
-              return (ab == c) ? (std::signbit(ab) ? ab : c) : (ab < c ? ab : c);
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Minimum3>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -16133,40 +15893,24 @@ inline void execute_v_minimum3_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_minimum_f32_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t,
-                                   [](auto a, auto b) { return util::ieee_minimum_simd(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP(float32_t, [compare_policy = amdgpu::comparison::Policy::make(
+                                                   wf.fp_denorm_mode_f32())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Minimum>(
+        compare_policy, a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              if (a == b)
-                return std::signbit(a) ? a : b;
-              return a < b ? a : b;
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::Minimum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -16181,39 +15925,24 @@ inline void execute_v_minimum_f32_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_minimum_f64_vop3([[maybe_unused]] Inst &inst,
                                        [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([](auto a, auto b) { return util::ieee_minimum_simd(a, b); });
+  ROCJITSU_TRY_SIMD_VOP3_BINARY_FP64([compare_policy = amdgpu::comparison::Policy::make(
+                                          wf.fp_denorm_mode_f16_f64())](auto a, auto b) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::Minimum>(
+        compare_policy, a, b);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f16_f64());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane64<amdgpu::sdwa::ResultFormat::NONE>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint64_t>([&]() {
           double v = [&]() {
-            double v = [&]() {
-              auto a = [&]() {
-                double sv =
-                    std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                double sv =
-                    std::bit_cast<double>(amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              if (a == b)
-                return std::signbit(a) ? a : b;
-              return a < b ? a : b;
-            }();
+            double v = std::bit_cast<double>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F64, amdgpu::minmax::Minimum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane64(inst.src1, lane)));
             const uint32_t effective_omod = amdgpu::fp_mode::effective_omod(
                 wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode(), inst.inst_.omod);
             if (effective_omod == 1)
@@ -16235,49 +15964,25 @@ inline void execute_v_minimum_f64_vop3([[maybe_unused]] Inst &inst,
 template <typename Inst>
 inline void execute_v_minimummaximum_f32_vop3([[maybe_unused]] Inst &inst,
                                               [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([](auto a, auto b, auto c) {
-    return util::ieee_maximum_simd(util::ieee_minimum_simd(a, b), c);
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinimumMaximum>(
+        compare_policy, a, b, c);
   });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = [&]() {
-              auto a = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                if (inst.inst_.abs & (1u << 0))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 0))
-                  sv = -sv;
-                return sv;
-              }();
-              auto b = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                if (inst.inst_.abs & (1u << 1))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 1))
-                  sv = -sv;
-                return sv;
-              }();
-              auto c = [&]() {
-                float sv =
-                    std::bit_cast<float>(amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                if (inst.inst_.abs & (1u << 2))
-                  sv = std::fabs(sv);
-                if (inst.inst_.neg & (1u << 2))
-                  sv = -sv;
-                return sv;
-              }();
-              if (std::isnan(a) || std::isnan(b) || std::isnan(c))
-                return std::numeric_limits<decltype(a)>::quiet_NaN();
-              auto ab = (a == b) ? (std::signbit(a) ? a : b) : (a < b ? a : b);
-              return (ab == c) ? (std::signbit(ab) ? c : ab) : (ab > c ? ab : c);
-            }();
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinimumMaximum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -16357,43 +16062,25 @@ inline void execute_v_minmax_i32_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
 template <typename Inst>
 inline void execute_v_minmax_num_f32_vop3([[maybe_unused]] Inst &inst,
                                           [[maybe_unused]] Wavefront &wf) {
-  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32(
-      [](auto a, auto b, auto c) { return util::stdx::fmax(util::stdx::fmin(a, b), c); });
+  ROCJITSU_TRY_SIMD_VOP3_TERNARY_FP32([compare_policy = amdgpu::comparison::Policy::make(
+                                           wf.fp_denorm_mode_f32())](auto a, auto b, auto c) {
+    return amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinMaxNum>(
+        compare_policy, a, b, c);
+  });
   uint64_t exec = dpp::execution_lane_mask(inst, wf);
+  const auto compare_policy = amdgpu::comparison::Policy::make(wf.fp_denorm_mode_f32());
   for (uint32_t lane = 0; lane < wf.wf_size(); ++lane) {
     if (!(exec & (1ULL << lane)))
       continue;
     sdwa::write_lane<amdgpu::sdwa::ResultFormat::F32>(
         inst, wf, inst.vdst, lane, std::bit_cast<uint32_t>([&]() {
           float v = [&]() {
-            float v = std::fmax(std::fmin(
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane));
-                                      if (inst.inst_.abs & (1u << 0))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 0))
-                                        sv = -sv;
-                                      return sv;
-                                    }(),
-                                    [&]() {
-                                      float sv = std::bit_cast<float>(
-                                          amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane));
-                                      if (inst.inst_.abs & (1u << 1))
-                                        sv = std::fabs(sv);
-                                      if (inst.inst_.neg & (1u << 1))
-                                        sv = -sv;
-                                      return sv;
-                                    }()),
-                                [&]() {
-                                  float sv = std::bit_cast<float>(
-                                      amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane));
-                                  if (inst.inst_.abs & (1u << 2))
-                                    sv = std::fabs(sv);
-                                  if (inst.inst_.neg & (1u << 2))
-                                    sv = -sv;
-                                  return sv;
-                                }());
+            float v = std::bit_cast<float>(
+                amdgpu::minmax::evaluate<amdgpu::comparison::F32, amdgpu::minmax::MinMaxNum>(
+                    amdgpu::minmax::Modifiers{inst.inst_.abs, inst.inst_.neg}, compare_policy,
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
+                    amdgpu::RegisterAccess(wf).read_lane(inst.src2, lane)));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
