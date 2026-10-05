@@ -14,6 +14,9 @@ Full documentation for amd_smi_lib is available at [https://rocm.docs.amd.com/pr
   - `driver_full_version` is `driver_version` plus `-build` when the build is known, otherwise `driver_version`. `driver_version` is unchanged.
   - On the WSL backend, `driver_full_version` is a copy of the WDDM `driver_version`.
 
+- **Added `amd-smi metric --usage-fields` to select usage fields**.  
+  - Returns only the named usage fields, in the requested order, for human, JSON, and CSV output. Named fields are always printed, as `N/A` when unavailable.
+
 ### Changed
 
 - **`amd-smi`, `amd-smi version`, and `amd-smi static --driver` include the DKMS build in the amdgpu version**.  
