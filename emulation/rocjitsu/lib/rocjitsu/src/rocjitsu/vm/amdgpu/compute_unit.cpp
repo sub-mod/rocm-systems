@@ -1094,7 +1094,7 @@ void ComputeUnitCore::track_memory_wait(Instruction &inst, Wavefront &wf,
             // writes. The instruction still issues its counter entry below.
             assert(width <= 32);
             for (uint32_t word = 0; word < width; ++word)
-              if (d.block_dword_mask & (uint32_t{1} << word))
+              if (d.block_dword_enabled(word))
                 append({RegClass::VGPR, static_cast<uint16_t>(logical_base + word), 1}, d.exec_mask,
                        byte_mask);
           } else if (width) {
@@ -1171,7 +1171,7 @@ void ComputeUnitCore::track_memory_wait(Instruction &inst, Wavefront &wf,
             if (!d.is_load && d.block_dword_mask != 0xffffffffu && reg.cls == RegClass::VGPR &&
                 reg.width == 32) {
               for (uint32_t word = 0; word < 32; ++word)
-                if (d.block_dword_mask & (uint32_t{1} << word))
+                if (d.block_dword_enabled(word))
                   scoreboard.add({sequence,
                                   wf.pc,
                                   vector_lanes,
