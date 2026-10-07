@@ -2998,7 +2998,7 @@ inline void execute_v_add_f16_vop2([[maybe_unused]] Inst &inst, [[maybe_unused]]
                 util::f16_to_f32(static_cast<uint16_t>(
                     amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                         amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), input_policy))),
-                0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                0.0f, wf.fp_round_mode_f16_f64()),
             wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl()));
   }
 }
@@ -3042,7 +3042,7 @@ inline void execute_v_add_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
                                 amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
                                 input_policy))),
                         1, inst.inst_.abs, inst.inst_.neg),
-                    0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                    0.0f, wf.fp_round_mode_f16_f64()),
                 wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl())),
             output_policy));
   }
@@ -8533,7 +8533,7 @@ inline void execute_v_cvt_f32_f16_vop1([[maybe_unused]] Inst &inst,
             util::f16_to_f32(
                 static_cast<uint16_t>(amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                     amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane), input_policy))),
-            wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode()))));
+            wf.cu().arch(), wf.ieee_mode()))));
   }
 }
 
@@ -8555,7 +8555,7 @@ inline void execute_v_cvt_f32_f16_vop3([[maybe_unused]] Inst &inst,
                         amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                             amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane), input_policy))),
                     0, inst.inst_.abs, inst.inst_.neg),
-                wf.cu().arch(), wf.fp_denorm_mode_f16_f64(), wf.ieee_mode()));
+                wf.cu().arch(), wf.ieee_mode()));
             return amdgpu::fp_mode::apply_omod_f32(
                 v, amdgpu::fp_mode::effective_omod(wf.cu().arch(), wf.fp_denorm_mode_f32(),
                                                    wf.ieee_mode(), inst.inst_.omod));
@@ -12409,8 +12409,7 @@ inline void execute_v_ldexp_f16_vop2([[maybe_unused]] Inst &inst, [[maybe_unused
                     amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                         amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane), input_policy))),
                 static_cast<int32_t>(
-                    static_cast<int16_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane))),
-                wf.fp_denorm_mode_f16_f64()),
+                    static_cast<int16_t>(amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane)))),
             wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl()));
   }
 }
@@ -12457,8 +12456,7 @@ inline void execute_v_ldexp_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused
                                 input_policy))),
                         0, inst.inst_.abs, inst.inst_.neg),
                     static_cast<int32_t>(static_cast<int16_t>(
-                        amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane))),
-                    wf.fp_denorm_mode_f16_f64()),
+                        amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane)))),
                 wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl())),
             output_policy));
   }
@@ -15503,7 +15501,7 @@ inline void execute_v_mul_f16_vop2([[maybe_unused]] Inst &inst, [[maybe_unused]]
                 util::f16_to_f32(static_cast<uint16_t>(
                     amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                         amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), input_policy))),
-                0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                0.0f, wf.fp_round_mode_f16_f64()),
             wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl()));
   }
 }
@@ -15547,7 +15545,7 @@ inline void execute_v_mul_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
                                 amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
                                 input_policy))),
                         1, inst.inst_.abs, inst.inst_.neg),
-                    0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                    0.0f, wf.fp_round_mode_f16_f64()),
                 wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl())),
             output_policy));
   }
@@ -18172,7 +18170,7 @@ inline void execute_v_sub_f16_vop2([[maybe_unused]] Inst &inst, [[maybe_unused]]
                 util::f16_to_f32(static_cast<uint16_t>(
                     amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                         amdgpu::RegisterAccess(wf).read_lane(inst.vsrc1, lane), input_policy))),
-                0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                0.0f, wf.fp_round_mode_f16_f64()),
             wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl()));
   }
 }
@@ -18216,7 +18214,7 @@ inline void execute_v_sub_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unused]]
                                 amdgpu::RegisterAccess(wf).read_lane(inst.src1, lane),
                                 input_policy))),
                         1, inst.inst_.abs, inst.inst_.neg),
-                    0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                    0.0f, wf.fp_round_mode_f16_f64()),
                 wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl())),
             output_policy));
   }
@@ -18688,7 +18686,7 @@ inline void execute_v_subrev_f16_vop2([[maybe_unused]] Inst &inst, [[maybe_unuse
                 util::f16_to_f32(static_cast<uint16_t>(
                     amdgpu::input_denormal::flush_input<amdgpu::fp_format::F16>(
                         amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane), input_policy))),
-                0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                0.0f, wf.fp_round_mode_f16_f64()),
             wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl()));
   }
 }
@@ -18732,7 +18730,7 @@ inline void execute_v_subrev_f16_vop3([[maybe_unused]] Inst &inst, [[maybe_unuse
                                 amdgpu::RegisterAccess(wf).read_lane(inst.src0, lane),
                                 input_policy))),
                         0, inst.inst_.abs, inst.inst_.neg),
-                    0.0f, wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64()),
+                    0.0f, wf.fp_round_mode_f16_f64()),
                 wf.fp_round_mode_f16_f64(), wf.fp_denorm_mode_f16_f64(), wf.fp16_ovfl())),
             output_policy));
   }
