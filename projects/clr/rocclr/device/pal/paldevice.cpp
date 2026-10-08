@@ -2408,6 +2408,80 @@ bool Device::deviceAllowAccess(void* ptr) const {
   return true;
 }
 
+// ================================================================================================
+bool Device::CheckExecutionState() const {
+  // The error state is sticky and the first failure is the interesting one, so
+  // once something is latched there is nothing left to learn from the KMD.
+  // This also keeps a faulted device from querying on every single operation.
+  if (amd::Device::IsGPUInError()) {
+    return false;
+  }
+  // PAL reports the query as unavailable for some clients (e.g. DX). Ask once
+  // and stop paying for it afterwards.
+  if (!executionStateQuery_.load(std::memory_order_relaxed)) {
+    return true;
+  }
+
+  Pal::PageFaultStatus pageFaultStatus = {};
+  const Pal::Result result = iDev()->CheckExecutionState(&pageFaultStatus);
+
+  // Pal::Result is signed, with the failures below Success and the purely
+  // informational codes (Unsupported, NotReady, ...) above it. Only a negative
+  // result says anything is wrong, so never turn an informational one into an
+  // error the application would have to handle.
+  if (result >= Pal::Result::Success) {
+    if (result == Pal::Result::Unsupported) {
+      executionStateQuery_.store(false, std::memory_order_relaxed);
+    }
+    return true;
+  }
+
+  cl_int gpu_error = CL_SUCCESS;
+  switch (result) {
+    case Pal::Result::ErrorDeviceLost:
+      // The device was removed, or hung and got reset. Matches the ROCr
+      // backend, which maps HSA_STATUS_ERROR_EXCEPTION to CL_INVALID_OPERATION
+      // and so to hipErrorLaunchFailure.
+      LogError("PAL reports the device as lost!");
+      gpu_error = CL_INVALID_OPERATION;
+      break;
+    case Pal::Result::ErrorGpuPageFaultDetected:
+      // Both a device-side trap and a genuine bad access arrive here: with no
+      // KMD trap handler installed (SetHipTrapHandler above) the trap faults
+      // instead of being caught, and PAL reports the same result for either.
+      // They are not distinguishable from the status alone, so report the
+      // launch failure PAL already surfaces today through the failed-submit
+      // path in VirtualGPU::Queue::isDone() rather than reclassifying one of
+      // them. The fault address is logged for diagnosis.
+      LogPrintfError("GPU page fault detected! %s at address 0x%llx",
+                     pageFaultStatus.flags.readFault ? "read" : "write",
+                     static_cast<unsigned long long>(pageFaultStatus.faultAddress));
+      gpu_error = CL_INVALID_OPERATION;
+      break;
+    case Pal::Result::ErrorOutOfGpuMemory:
+      LogError("PAL reports the device out of GPU memory!");
+      gpu_error = CL_OUT_OF_RESOURCES;
+      break;
+    case Pal::Result::ErrorUnavailable:
+      // Not supported for this client (PAL documents this for DX). Nothing is
+      // wrong with the device, so stop asking.
+      executionStateQuery_.store(false, std::memory_order_relaxed);
+      return true;
+    case Pal::Result::ErrorInvalidValue:
+      // PAL couldn't read the reset state. That says nothing about the device,
+      // so don't manufacture a failure the application would have to handle.
+      ClPrint(amd::LOG_DEBUG, amd::LOG_ALWAYS, "Couldn't query the device execution state!");
+      return true;
+    default:
+      LogPrintfError("PAL reports the device in an unknown state! result:%d", result);
+      gpu_error = CL_DEVICE_NOT_AVAILABLE;
+      break;
+  }
+
+  gpu_error_.store(gpu_error, std::memory_order_relaxed);
+  return false;
+}
+
 void* Device::svmAlloc(amd::Context& context, size_t size, size_t alignment, cl_svm_mem_flags flags,
                        void* svmPtr) const {
   constexpr bool kForceAllocation = true;

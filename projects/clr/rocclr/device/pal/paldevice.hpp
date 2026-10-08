@@ -608,6 +608,11 @@ class Device : public NullDevice {
   //! Allow access for peer device
   bool deviceAllowAccess(void* dst) const;
 
+  //! Asks PAL whether the device is still executing normally and latches the
+  //! failure into amd::Device::gpu_error_ if it isn't.
+  //! Returns false if the device was lost or faulted.
+  bool CheckExecutionState() const;
+
   //! Returns a handle to the capture manager (RGP or UberTrace)
   ICaptureMgr* captureMgr() const { return captureMgr_; }
 
@@ -745,6 +750,10 @@ class Device : public NullDevice {
 
   static char* platformObj_;         //!< Memory allocated for PAL platform object
   static Pal::IPlatform* platform_;  //!< Pointer to the PAL platform object
+
+  //! Cleared when PAL reports CheckExecutionState() as unsupported, so the
+  //! runtime stops paying for the query on every command buffer retirement.
+  mutable std::atomic<bool> executionStateQuery_{true};
 
   mutable std::recursive_mutex lockAsyncOps_;  //!< Lock to serialise all async ops on this device
   //! Lock to serialise all async ops on initialization heap operation

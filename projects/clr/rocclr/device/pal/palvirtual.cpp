@@ -548,6 +548,11 @@ bool VirtualGPU::Queue::waitForEvent(uint id) {
   constexpr bool IbReuse = true;
   bool result = waitForFence<!IbReuse>(slotId);
   cmbBufIdRetired_ = id;
+  // The fence is signaled even when the KMD tore the queue down after a
+  // device-side fault, so a successful wait doesn't mean the work actually ran.
+  // As in isDone() below, the failure travels through gpu_error_ rather than
+  // this return value, which only says whether the runtime finished waiting.
+  gpu_.dev().CheckExecutionState();
   return result;
 }
 
@@ -570,6 +575,12 @@ bool VirtualGPU::Queue::isDone(uint id) {
     return false;
   }
   cmbBufIdRetired_ = id;
+  // Retiring a command buffer is where a device-side fault becomes observable:
+  // the fence completes regardless, so without asking PAL for the device state
+  // the failure stays invisible to waits and queries until some later
+  // submission happens to fail. The query only runs when a command buffer is
+  // newly retired, not on every poll of an already retired one.
+  gpu_.dev().CheckExecutionState();
   return true;
 }
 
