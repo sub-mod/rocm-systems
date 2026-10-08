@@ -6,6 +6,7 @@ import argparse
 import errno
 import os
 import sys
+import textwrap
 import time
 import collections
 from amdsmi import amdsmi_interface
@@ -56,7 +57,7 @@ class _UsageFieldsAction(argparse.Action):
         values: str,
         option_string: str = None,
     ) -> None:
-        fields = tuple(field.strip() for field in values.split(","))
+        fields = tuple(field.strip().lower() for field in values.split(","))
         if any(not field for field in fields):
             raise argparse.ArgumentError(self, "usage fields must not contain an empty name")
         unknown = [field for field in fields if field not in _USAGE_FIELDS]
@@ -1931,13 +1932,14 @@ class AMDSMIParser(argparse.ArgumentParser):
                 metric_parser.add_argument(
                     "--usage-fields",
                     action=_UsageFieldsAction,
-                    metavar="FIELD[,FIELD...]",
+                    metavar="FIELD[,...]",
                     default=None,
                     help=(
-                        "Select usage fields in order; implies --usage. Combine with --json or --csv.\n"
-                        "    Availability depends on GPU and driver; N/A is unavailable, 0 is idle.\n"
-                        "    Average activity differs from instantaneous busy readings. Fields:\n    "
-                        + ", ".join(_USAGE_FIELDS)
+                        "Select usage fields in order; implies --usage.\n"
+                        "    Names ignore case. N/A is unavailable; 0 is idle.\n"
+                        "    Average activity is not instantaneous busy readings.\n"
+                        "    Fields:\n    "
+                        + "\n    ".join(textwrap.wrap(", ".join(_USAGE_FIELDS), width=54))
                     ),
                 )
                 metric_parser.add_argument(

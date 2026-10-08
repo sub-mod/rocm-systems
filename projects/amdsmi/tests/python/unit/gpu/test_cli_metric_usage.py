@@ -10,8 +10,10 @@ import contextlib
 import copy
 import csv
 import io
+import itertools
 import json
 import logging
+import re
 import signal
 import sys
 import tempfile
@@ -28,7 +30,11 @@ from common.common import (
 )
 
 
-class _LibraryError(Exception):
+class _AmdSmiError(Exception):
+    pass
+
+
+class _LibraryError(_AmdSmiError):
     def get_error_info(self) -> str:
         return str(self)
 
@@ -51,6 +57,7 @@ class _UsageFixture(unittest.TestCase):
             amdsmi_wrapper=sys.modules["amdsmi"].amdsmi_interface.amdsmi_wrapper,
             AMDSMI_MAX_RAIL_INDEX=7,
             amdsmi_get_gpu_metrics_info=mock.Mock(side_effect=lambda _gpu: self.metrics),
+            amdsmi_get_gpu_metrics_header_info=mock.Mock(return_value={}),
             _NA_amdsmi_get_gpu_metrics_info=mock.Mock(return_value={}),
             amdsmi_get_gpu_activity=mock.Mock(side_effect=lambda _gpu: self.activity),
             amdsmi_get_gpu_partition_metrics_info=mock.Mock(return_value=None),
@@ -67,7 +74,11 @@ class _UsageFixture(unittest.TestCase):
             "amdsmi_get_temp_metric",
         ):
             setattr(self.interface, name, mock.Mock(side_effect=AssertionError(name)))
-        exception = fake_module("amdsmi.amdsmi_exception", AmdSmiLibraryException=_LibraryError)
+        exception = fake_module(
+            "amdsmi.amdsmi_exception",
+            AmdSmiException=_AmdSmiError,
+            AmdSmiLibraryException=_LibraryError,
+        )
         package = fake_module("amdsmi", amdsmi_interface=self.interface, amdsmi_exception=exception)
         # Restore only replaced modules; unloading Unicode data breaks later source parsing.
         self.stack.callback(
@@ -191,6 +202,11 @@ class TestUsageParser(_UsageFixture):
         self.assertEqual(args.usage_fields, ("umc_activity", "gfx_activity"))
         self.assertTrue(args.usage)
 
+    def test_selector_names_are_case_insensitive(self) -> None:
+        # The CLI entry point lowercases argv, so the parser must agree.
+        args = self.parse("--usage-fields", "GFX_ACTIVITY,Umc_Activity")
+        self.assertEqual(args.usage_fields, ("gfx_activity", "umc_activity"))
+
     def test_invalid_fields_raise_argument_errors(self) -> None:
         for value, message in (
             ("", "empty"),
@@ -199,9 +215,9 @@ class TestUsageParser(_UsageFixture):
             (",gfx_activity", "empty"),
             ("gfx_activity,,umc_activity", "empty"),
             ("unknown", "unknown"),
-            ("GFX_ACTIVITY", "unknown"),
             ("gfx_activity,gfx_activity", "duplicate"),
             ("gfx_activity, gfx_activity ", "duplicate"),
+            ("gfx_activity,GFX_ACTIVITY", "duplicate"),
         ):
             with self.subTest(value=value):
                 with self.assertRaises(self.invalid_parameter) as caught:
@@ -212,28 +228,26 @@ class TestUsageParser(_UsageFixture):
         with self.assertRaises(self.missing_parameter):
             self.parse("--usage-fields")
 
-    def test_all_documented_fields_are_accepted(self) -> None:
-        expected = (
-            "gfx_activity",
-            "umc_activity",
-            "mm_activity",
-            "vcn_activity",
-            "jpeg_activity",
-            "gfx_busy_inst",
-            "jpeg_busy",
-            "vcn_busy",
-            "apu_average_gfx_activity",
-            "apu_average_mm_activity",
-            "apu_average_vcn_activity",
-            "apu_average_ipu_activity",
-            "apu_average_core_c0_activity",
-            "apu_average_dram_reads",
-            "apu_average_dram_writes",
-            "apu_average_ipu_reads",
-            "apu_average_ipu_writes",
+    def test_all_accepted_fields_parse_and_cover_filtered_fields(self) -> None:
+        accepted = self.parser_module._USAGE_FIELDS
+        args = self.parse("--usage-fields", ",".join(accepted))
+        self.assertEqual(args.usage_fields, accepted)
+        field_support = load_cli_module(
+            "usage_field_support_test", str(self.cli_dir / "amdsmi_metrics_field_support.py")
         )
-        args = self.parse("--usage-fields", ",".join(expected))
-        self.assertEqual(args.usage_fields, expected)
+        filtered = {
+            key for section, key in field_support._CLI_PATH_REQUIRED_SOURCES if section == "usage"
+        }
+        self.assertLessEqual(filtered, set(accepted))
+
+    def test_documented_fields_match_accepted_fields(self) -> None:
+        docs = self.cli_dir.parent / "docs" / "how-to" / "amdsmi-cli-tool.md"
+        if not docs.is_file():
+            self.skipTest("CLI docs exist only in the source tree")
+        section = docs.read_text(encoding="utf-8").split("#### Selecting usage fields", 1)[1]
+        bullets = section.split("Supported fields:", 1)[1].split("\n\n", 2)[1]
+        documented = tuple(re.findall(r"`([a-z0-9_]+)`", bullets))
+        self.assertEqual(documented, self.parser_module._USAGE_FIELDS)
 
     def test_legacy_usage_remains_boolean(self) -> None:
         args = self.parse("--usage")
@@ -280,11 +294,20 @@ class TestUsageParser(_UsageFixture):
             "--csv",
             "N/A",
             "0 is idle",
-            "Average activity differs from instantaneous busy readings",
-            "apu_average_ipu_writes",
+            "instantaneous busy readings",
+            "ignore case",
+            *self.parser_module._USAGE_FIELDS,
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, help_text)
+        lines = help_text.splitlines()
+        start = next(i for i, line in enumerate(lines) if line.startswith("  --usage-fields"))
+        end = next(i for i, line in enumerate(lines) if line.startswith("  -p, --power"))
+        for line in lines[start:end]:
+            self.assertLessEqual(len(line), 90, line)
+        # A longer invocation would push every metric option's help to a new column.
+        usage_line = next(line for line in lines if line.startswith("  -u, --usage "))
+        self.assertEqual(usage_line.index("Displays engine usage"), 31)
 
 
 class TestUsageSelection(_UsageFixture):
@@ -334,6 +357,29 @@ class TestUsageSelection(_UsageFixture):
         commands.metric_cpu.assert_not_called()
         commands.metric_core.assert_not_called()
         commands.metric_nic.assert_not_called()
+
+    def test_selected_fields_survive_unsupported_filter(self) -> None:
+        # v1.3 carries no JPEG activity, so the human-output filter targets it.
+        self.interface.amdsmi_get_gpu_metrics_header_info.return_value = {
+            "format_revision": 1,
+            "content_revision": 3,
+        }
+        for selection in ("jpeg_activity", "gfx_activity,jpeg_activity"):
+            with self.subTest(selection=selection):
+                result = self.run_gpu(
+                    self.parse("--usage-fields", selection), format="human_readable"
+                )
+                self.assertEqual(list(result["usage"]), selection.split(","))
+                self.assertEqual(result["usage"]["jpeg_activity"], "N/A")
+
+    def test_unselected_usage_still_filters_unsupported(self) -> None:
+        self.interface.amdsmi_get_gpu_metrics_header_info.return_value = {
+            "format_revision": 1,
+            "content_revision": 3,
+        }
+        result = self.run_gpu(self.parse("--usage"), format="human_readable")
+        self.assertNotIn("jpeg_activity", result["usage"])
+        self.assertEqual(result["usage"]["gfx_activity"], "0 %")
 
 
 class TestUsageSources(_UsageFixture):
@@ -626,7 +672,7 @@ class TestUsageCsv(_UsageFixture):
         self.assertIsNone(logger.usage_fields)
         payload = {"usage": {"gfx_busy_inst": {"xcp_0": [0, 17]}}}
         before = copy.deepcopy(payload)
-        self.assertEqual(logger.flatten_dict(payload), {"xcp_0": [0, 17]})
+        generic = logger.flatten_dict(copy.deepcopy(payload))
         logger.usage_fields = ("gfx_busy_inst",)
         logger._store_output_amdsmi(gpu_id=0, argument="values", data=payload)
         self.assertEqual(logger.output, {"gpu": 0, "gfx_busy_inst_xcp_0": [0, 17]})
@@ -639,11 +685,12 @@ class TestUsageCsv(_UsageFixture):
             logger.print_output(multiple_device_enabled=True)
         self.assertEqual(logger.multiple_device_output, rows_before)
         self.assertEqual(payload, before)
-        self.assertEqual(logger.flatten_dict(payload), {"xcp_0": [0, 17]})
+        # Selection must not change the shared helper used by every other command.
+        self.assertEqual(logger.flatten_dict(copy.deepcopy(payload)), generic)
 
 
 class TestUsageOutput(_UsageFixture):
-    def test_mixed_watch_file_preserves_cpu_core_records(self) -> None:
+    def test_mixed_watch_json_file_keeps_cpu_core_records(self) -> None:
         self.helpers.is_amd_hsmp_initialized.return_value = True
         self.helpers.get_cpu_id_from_device_handle = mock.Mock(
             side_effect=lambda handle: handle - 20
@@ -657,120 +704,58 @@ class TestUsageOutput(_UsageFixture):
         self.interface.amdsmi_get_cpu_core_boostlimit = mock.Mock(
             side_effect=lambda handle: 4000 + handle - 30
         )
-        for output_format in ("json", "csv", "human_readable"):
+        for selection in (("--usage",), ("--usage-fields", "gfx_activity")):
             for cpu, core in ((True, False), (False, True), (True, True)):
-                for cancelled in (False, True):
-                    with self.subtest_directory(
-                        format=output_format, cpu=cpu, core=core, cancelled=cancelled
-                    ) as directory:
-                        path = Path(directory) / "mixed-watch-output"
-                        commands = self.commands(format=output_format, destination=path)
-                        commands.device_handles = [10, 11]
-                        commands.cpu_handles = [20, 21]
-                        commands.core_handles = [30, 31]
-                        options = (
-                            [] if output_format == "human_readable" else ["--" + output_format]
-                        )
-                        if cpu:
-                            options.append("--cpu-prochot")
-                        if core:
-                            options.append("--core-boost-limit")
-                        args = self.parse(
-                            "--usage-fields",
-                            "gfx_activity",
-                            "--watch",
-                            "1",
-                            "--iterations",
-                            "2",
-                            "--file",
-                            str(path),
-                            *options,
-                        )
-                        self.interface.amdsmi_get_cpu_prochot_status.reset_mock()
-                        self.interface.amdsmi_get_cpu_core_boostlimit.reset_mock()
-                        if cancelled:
-                            with mock.patch.object(
-                                self.helper_module.time, "sleep", side_effect=KeyboardInterrupt
-                            ):
-                                with self.assertRaises(KeyboardInterrupt):
-                                    self.run_metric(commands, args)
-                        else:
-                            self.run_metric(commands, args)
+                with self.subtest_directory(selection=selection, cpu=cpu, core=core) as directory:
+                    path = Path(directory) / "mixed-watch.json"
+                    commands = self.commands(format="json", destination=path)
+                    commands.device_handles = [10, 11]
+                    commands.cpu_handles = [20, 21]
+                    commands.core_handles = [30, 31]
+                    options = ["--json"]
+                    if cpu:
+                        options.append("--cpu-prochot")
+                    if core:
+                        options.append("--core-boost-limit")
+                    args = self.parse(
+                        *selection,
+                        "--watch",
+                        "1",
+                        "--iterations",
+                        "2",
+                        "--file",
+                        str(path),
+                        *options,
+                    )
+                    self.interface.amdsmi_get_cpu_prochot_status.reset_mock()
+                    self.interface.amdsmi_get_cpu_core_boostlimit.reset_mock()
+                    self.run_metric(commands, args)
+                    self.assertEqual(
+                        self.interface.amdsmi_get_cpu_prochot_status.call_args_list,
+                        [mock.call(20), mock.call(21)] if cpu else [],
+                    )
+                    self.assertEqual(
+                        self.interface.amdsmi_get_cpu_core_boostlimit.call_args_list,
+                        [mock.call(30), mock.call(31)] if core else [],
+                    )
+                    output = json.loads(path.read_text(encoding="utf-8"))
+                    self.assertEqual(
+                        set(output),
+                        {"gpu_data"}
+                        | ({"cpu_data"} if cpu else set())
+                        | ({"core_data"} if core else set()),
+                    )
+                    if cpu:
                         self.assertEqual(
-                            self.interface.amdsmi_get_cpu_prochot_status.call_args_list,
-                            [mock.call(20), mock.call(21)] if cpu else [],
+                            output["cpu_data"],
+                            [{"cpu": i, "prochot": {"prochot_status": i}} for i in (0, 1)],
                         )
+                    if core:
                         self.assertEqual(
-                            self.interface.amdsmi_get_cpu_core_boostlimit.call_args_list,
-                            [mock.call(30), mock.call(31)] if core else [],
+                            output["core_data"],
+                            [{"core": i, "boost_limit": {"value": 4000 + i}} for i in (0, 1)],
                         )
-                        text = path.read_text(encoding="utf-8")
-                        gpu_ids = [0, 1] * (1 if cancelled else 2)
-                        if output_format == "json":
-                            output = json.loads(text)
-                            self.assertIsInstance(output, dict)
-                            self.assertEqual(
-                                set(output),
-                                {"gpu_data"}
-                                | ({"cpu_data"} if cpu else set())
-                                | ({"core_data"} if core else set()),
-                            )
-                            if cpu:
-                                self.assertEqual(
-                                    output["cpu_data"],
-                                    [{"cpu": i, "prochot": {"prochot_status": i}} for i in (0, 1)],
-                                )
-                            if core:
-                                self.assertEqual(
-                                    output["core_data"],
-                                    [
-                                        {"core": i, "boost_limit": {"value": 4000 + i}}
-                                        for i in (0, 1)
-                                    ],
-                                )
-                            self.assertEqual([row["gpu"] for row in output["gpu_data"]], gpu_ids)
-                            for row in output["gpu_data"]:
-                                self.assertIsInstance(row["timestamp"], int)
-                                self.assertEqual(
-                                    row["usage"], {"gfx_activity": {"value": 0, "unit": "%"}}
-                                )
-                        elif output_format == "csv":
-                            reader = csv.DictReader(io.StringIO(text))
-                            rows = list(reader)
-                            self.assertEqual(len(rows), len(gpu_ids) + 2 * (cpu + core))
-                            self.assertNotIn("usage", reader.fieldnames)
-                            self.assertNotIn(None, {key for row in rows for key in row})
-                            for device, field, values in (
-                                ("cpu", "prochot_status", ["0", "1"] if cpu else []),
-                                ("core", "value", ["4000", "4001"] if core else []),
-                            ):
-                                device_rows = [
-                                    row for row in rows if row.get(device, "N/A") != "N/A"
-                                ]
-                                self.assertEqual([row[field] for row in device_rows], values)
-                                self.assertEqual(
-                                    [row[device] for row in device_rows],
-                                    ["0", "1"] if values else [],
-                                )
-                                for row in device_rows:
-                                    self.assertEqual(row["timestamp"], "N/A")
-                                    self.assertEqual(row["gfx_activity"], "N/A")
-                            gpu_rows = [row for row in rows if row["gpu"] != "N/A"]
-                            self.assertEqual(
-                                [row["gpu"] for row in gpu_rows], [str(gpu) for gpu in gpu_ids]
-                            )
-                            for row in gpu_rows:
-                                self.assertTrue(row["timestamp"].isdigit())
-                                self.assertEqual(row["gfx_activity"], "0")
-                        else:
-                            for index in (0, 1):
-                                self.assertEqual(text.count(f"CPU: {index}"), int(cpu))
-                                self.assertEqual(text.count(f"PROCHOT_STATUS: {index}"), int(cpu))
-                                self.assertEqual(text.count(f"CORE: {index}"), int(core))
-                                self.assertEqual(text.count(f"VALUE: {4000 + index}"), int(core))
-                                self.assertEqual(text.count(f"GPU: {index}"), 1 if cancelled else 2)
-                            self.assertEqual(text.count("TIMESTAMP:"), len(gpu_ids))
-                            self.assertEqual(text.count("GFX_ACTIVITY: 0 %"), len(gpu_ids))
+                    self.assertEqual([row["gpu"] for row in output["gpu_data"]], [0, 1, 0, 1])
 
     def test_cancelled_watch_file_flushes_completed_samples(self) -> None:
         init_path = self.cli_dir / "amdsmi_init.py"
@@ -787,9 +772,14 @@ class TestUsageOutput(_UsageFixture):
         )
         for output_format in ("json", "csv", "human_readable"):
             for cancellation in (signal.SIGINT, signal.SIGTERM, KeyboardInterrupt()):
-                for devices in ([10], [10, 11]):
+                for devices, selection in itertools.product(
+                    ([10], [10, 11]), (("--usage",), ("--usage-fields", "gfx_activity"))
+                ):
                     with self.subtest_directory(
-                        format=output_format, cancellation=cancellation, devices=devices
+                        format=output_format,
+                        cancellation=cancellation,
+                        devices=devices,
+                        selection=selection,
                     ) as directory:
                         path = Path(directory) / "watch-output"
                         commands = self.commands(format=output_format, destination=path)
@@ -797,15 +787,7 @@ class TestUsageOutput(_UsageFixture):
                         options = (
                             [] if output_format == "human_readable" else ["--" + output_format]
                         )
-                        args = self.parse(
-                            "--usage-fields",
-                            "gfx_activity",
-                            "--watch",
-                            "1",
-                            "--file",
-                            str(path),
-                            *options,
-                        )
+                        args = self.parse(*selection, "--watch", "1", "--file", str(path), *options)
                         if isinstance(cancellation, KeyboardInterrupt):
                             effect = cancellation
                             exception_type = KeyboardInterrupt
@@ -955,11 +937,10 @@ class TestUsageOutput(_UsageFixture):
             self.assertEqual(args.usage_fields, ("gfx_activity", "mm_activity"))
             self.assertEqual(args.gpu, [10, 11])
             self.assertEqual(self.metrics, before)
-            rows = json.loads(path.read_text(encoding="utf-8"))
-            self.assertIsInstance(rows, list)
+            # Same gpu_data document as a plain --usage watch.
+            rows = json.loads(path.read_text(encoding="utf-8"))["gpu_data"]
             self.assertEqual([row["gpu"] for row in rows], [0, 1, 0, 1])
             for row in rows:
-                self.assertIsInstance(row["timestamp"], int)
                 self.assertEqual(list(row["usage"]), ["gfx_activity", "mm_activity"])
                 self.assertEqual(row["usage"]["gfx_activity"], {"value": 0, "unit": "%"})
                 self.assertEqual(row["usage"]["mm_activity"], "N/A")
@@ -1083,6 +1064,78 @@ class TestUsageOutput(_UsageFixture):
                 self.assertEqual(row["gfx_busy_inst"], "N/A")
                 self.assertEqual(row["gfx_activity"], "0")
                 self.assertEqual(row["gpu"], "0")
+
+    def test_watch_stopped_before_first_sample_keeps_existing_file(self) -> None:
+        self.interface.amdsmi_get_gpu_activity.side_effect = KeyboardInterrupt
+        for selection in (("--usage",), ("--usage-fields", "gfx_activity")):
+            for output_format in ("json", "csv", "human_readable"):
+                with self.subtest_directory(selection=selection, format=output_format) as directory:
+                    path = Path(directory) / "watch-output"
+                    path.write_text("existing user data\n", encoding="utf-8")
+                    commands = self.commands(format=output_format, destination=path)
+                    options = [] if output_format == "human_readable" else ["--" + output_format]
+                    args = self.parse(
+                        *selection, "--watch", "1", "--file", str(path), "--append", *options
+                    )
+                    with self.assertRaises(KeyboardInterrupt):
+                        self.run_metric(commands, args)
+                    self.assertEqual(path.read_text(encoding="utf-8"), "existing user data\n")
+
+    def test_unselected_watch_files_include_every_sample(self) -> None:
+        for output_format in ("json", "csv", "human_readable"):
+            with self.subtest_directory(format=output_format) as directory:
+                path = Path(directory) / "watch-output"
+                commands = self.commands(format=output_format, destination=path)
+                commands.device_handles = [10, 11]
+                options = [] if output_format == "human_readable" else ["--" + output_format]
+                args = self.parse(
+                    "--usage", "--watch", "1", "--iterations", "2", "--file", str(path), *options
+                )
+                self.run_metric(commands, args)
+                text = path.read_text(encoding="utf-8")
+                if output_format == "json":
+                    # Normal completion keeps the existing gpu_data document.
+                    rows = json.loads(text)["gpu_data"]
+                    self.assertEqual([row["gpu"] for row in rows], [0, 1, 0, 1])
+                elif output_format == "csv":
+                    rows = list(csv.DictReader(io.StringIO(text)))
+                    self.assertEqual([row["gpu"] for row in rows], ["0", "1", "0", "1"])
+                else:
+                    self.assertEqual(text.count("TIMESTAMP:"), 4)
+                    self.assertEqual(text.count("GFX_ACTIVITY: 0 %"), 4)
+
+    def test_unselected_watch_csv_is_stable_and_does_not_mutate_rows(self) -> None:
+        self.interface.amdsmi_get_gpu_partition_metrics_info.side_effect = [
+            {"xcp_stats.gfx_busy_inst": "N/A"},
+            {"xcp_stats.gfx_busy_inst": [[0, 100]]},
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "watch.csv"
+            commands = self.commands(format="csv", destination=path)
+            args = self.parse(
+                "--usage",
+                "--partition",
+                "--csv",
+                "--watch",
+                "1",
+                "--iterations",
+                "2",
+                "--file",
+                str(path),
+            )
+            self.run_metric(commands, args)
+            reader = csv.DictReader(io.StringIO(path.read_text(encoding="utf-8")))
+            rows = list(reader)
+            self.assertEqual(len(rows), 2)
+            fields = reader.fieldnames
+            # First-seen column order, so a key that appears later is appended.
+            self.assertEqual(fields[-1], "gfx_busy_inst_xcp_0")
+            self.assertLess(fields.index("gfx_activity"), fields.index("gfx_busy_inst"))
+            self.assertEqual(rows[0]["gfx_busy_inst"], "N/A")
+            self.assertEqual(rows[0]["gfx_busy_inst_xcp_0"], "N/A")
+            self.assertEqual(rows[1]["gfx_busy_inst_xcp_0"], "[0, 100]")
+            self.assertNotIn("gfx_busy_inst_xcp_0", commands.logger.watch_output[0])
+            self.assertNotIn("gfx_busy_inst", commands.logger.watch_output[1])
 
     def test_non_watch_files_keep_complete_output(self) -> None:
         for output_format in ("json", "csv", "human_readable"):

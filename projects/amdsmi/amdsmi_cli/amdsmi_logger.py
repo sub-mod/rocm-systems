@@ -778,18 +778,10 @@ class AMDSMILogger:
             if (
                 watching_output
             ):  # Flush the full JSON output to the file on watch command completion
-                watch_output = self.watch_output
-                if self.usage_fields and (
-                    self.store_cpu_json_output or self.store_core_json_output
-                ):
-                    watch_output = {}
-                    if self.store_cpu_json_output:
-                        watch_output["cpu_data"] = self.store_cpu_json_output
-                    if self.store_core_json_output:
-                        watch_output["core_data"] = self.store_core_json_output
-                    watch_output["gpu_data"] = self.watch_output
+                if not self.watch_output:
+                    return
                 with self.destination.open("w", encoding="utf-8") as output_file:
-                    json.dump(watch_output, output_file, indent=4)
+                    json.dump(self.watch_output, output_file, indent=4)
             else:
                 with self.destination.open("a", encoding="utf-8") as output_file:
                     json.dump(json_output, output_file, indent=4)
@@ -825,8 +817,10 @@ class AMDSMILogger:
             with self.destination.open("w", encoding="utf-8") as output_file:
                 json.dump(combined_json, output_file, indent=4)
 
-    def _usage_csv_header(self, rows: list) -> list:
+    def _csv_header(self, rows: list) -> list:
         keys = list(dict.fromkeys(key for row in rows for key in row))
+        if not self.usage_fields:
+            return keys
         selected = [
             key
             for field in self.usage_fields
@@ -844,13 +838,13 @@ class AMDSMILogger:
                 header.append(key)
         return header
 
-    def _print_usage_csv(self, multiple_device_enabled: bool, watching_output: bool) -> None:
+    def _print_csv_output(self, multiple_device_enabled=False, watching_output=False):
         rows = self.multiple_device_output if multiple_device_enabled else [self.output]
         if self.destination != "stdout" and watching_output:
             rows = self.watch_output
         if not rows:
             return
-        header = self._usage_csv_header(rows)
+        header = self._csv_header(rows)
         if self.destination == "stdout":
             output = self.CsvStdoutBuilder()
             writer = csv.DictWriter(output, fieldnames=header, restval="N/A")
@@ -863,67 +857,6 @@ class AMDSMILogger:
                 writer = csv.DictWriter(output, fieldnames=header, restval="N/A")
                 writer.writeheader()
                 writer.writerows(rows)
-
-    def _print_csv_output(self, multiple_device_enabled=False, watching_output=False):
-        if self.usage_fields:
-            self._print_usage_csv(
-                multiple_device_enabled=multiple_device_enabled, watching_output=watching_output
-            )
-            return
-        if multiple_device_enabled:
-            stored_csv_output = self.multiple_device_output
-        else:
-            if not isinstance(self.output, list):
-                stored_csv_output = [self.output]
-
-        if stored_csv_output:
-            csv_keys = set()
-            for output in stored_csv_output:
-                for key in output:
-                    csv_keys.add(key)
-
-            for index, output_dict in enumerate(stored_csv_output):
-                remaining_keys = csv_keys - set(output_dict.keys())
-                for key in remaining_keys:
-                    stored_csv_output[index][key] = "N/A"
-
-        if self.destination == "stdout":
-            if stored_csv_output:
-                # Get the header as a list of the first element to maintain order
-                csv_header = stored_csv_output[0].keys()
-                csv_stdout_output = self.CsvStdoutBuilder()
-                writer = csv.DictWriter(csv_stdout_output, csv_header)
-                writer.writeheader()
-                writer.writerows(stored_csv_output)
-                print(str(csv_stdout_output))
-        else:
-            if watching_output:
-                with self.destination.open("w", newline="", encoding="utf-8") as output_file:
-                    if self.watch_output:
-                        csv_keys = set()
-                        for output in self.watch_output:
-                            for key in output:
-                                csv_keys.add(key)
-
-                        for index, output_dict in enumerate(self.watch_output):
-                            remaining_keys = csv_keys - set(output_dict.keys())
-                            for key in remaining_keys:
-                                self.watch_output[index][key] = "N/A"
-
-                        # Get the header as a list of the first element to maintain order
-                        csv_header = self.watch_output[0].keys()
-                        writer = csv.DictWriter(output_file, csv_header)
-                        writer.writeheader()
-                        writer.writerows(self.watch_output)
-            else:
-                with self.destination.open("a", newline="", encoding="utf-8") as output_file:
-                    # Only write to file if there is data
-                    if stored_csv_output:
-                        # Get the header as a list of the first element to maintain order
-                        csv_header = stored_csv_output[0].keys()
-                        writer = csv.DictWriter(output_file, csv_header)
-                        writer.writeheader()
-                        writer.writerows(stored_csv_output)
 
     def _print_dual_csv_output(self, multiple_device_enabled=False, watching_output=False):
         if multiple_device_enabled:
@@ -1121,6 +1054,8 @@ class AMDSMILogger:
                 print(human_readable_output.encode("ascii", "ignore").decode("ascii"))
         else:
             if watching_output:
+                if not self.watch_output:
+                    return
                 with self.destination.open("w", encoding="utf-8") as output_file:
                     human_readable_output = ""
                     for output in self.watch_output:

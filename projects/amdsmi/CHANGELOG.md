@@ -30,6 +30,17 @@ Full documentation for amd_smi_lib is available at [https://rocm.docs.amd.com/pr
 - **Fixed runtime fatal CPERs reporting no AFIDs**.  
   - `amd-smi ras --cper` showed an empty `list afids` column for fatal records, `amd-smi ras --afid --cper-file` printed `-`, and `amdsmi_get_afids_from_cper()` returned no AFIDs. amdgpu writes fatal crashdump sections 32 bytes shorter than `sizeof(cper_sec_crashdump)`, and the section bounds check required the full struct, so every such section was skipped. The check now requires only the dump member the record type uses.
 
+- **Fixed `amd-smi metric --usage` discarding readable values when one source failed**.  
+  - A failed average-activity query no longer turns the whole usage section into `N/A`; partition and VCN readings from other sources are kept.
+  - Errors other than AMD SMI library errors now stop the command instead of printing `USAGE: N/A`.
+
+- **Fixed `amd-smi metric --watch --file` losing samples**.  
+  - CSV and human-readable watch files kept every sample except the last one; they now keep all of them, including when the watch is stopped with Ctrl-C or SIGTERM.
+  - A watch stopped before its first sample no longer empties an existing `--append` file.
+
+- **Fixed unstable CSV column order when rows have different fields**.  
+  - Columns that appear only in later rows were added in a random order; they now follow the order they first appear.
+
 ## amd_smi_lib for ROCm 10.1.0
 
 ### Added

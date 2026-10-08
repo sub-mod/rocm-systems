@@ -252,7 +252,8 @@ class MetricCommands:
             try:
                 self.helpers.handle_watch(args=args, subcommand=self.metric_gpu, logger=self.logger)
             finally:
-                if usage_fields and self.logger.destination != "stdout":
+                # Each flush runs before its sample is stored, so the last one lands here.
+                if self.logger.destination != "stdout":
                     self.logger.print_output(watching_output=True)
             return
 
@@ -508,84 +509,80 @@ class MetricCommands:
                         gpu_id,
                         error.get_error_info(),
                     )
-                try:
-                    logging.debug(f"engine_usage dictionary = {engine_usage}")
+                logging.debug(f"engine_usage dictionary = {engine_usage}")
 
-                    # TODO: move vcn_activity and jpeg_activity into amdsmi_get_gpu_activity
-                    engine_usage["vcn_activity"] = gpu_metric.get("vcn_activity", "N/A")
-                    engine_usage["jpeg_activity"] = gpu_metric.get("jpeg_activity", "N/A")
-                    engine_usage["gfx_busy_inst"] = "N/A"
-                    engine_usage["jpeg_busy"] = "N/A"
-                    engine_usage["vcn_busy"] = "N/A"
+                # TODO: move vcn_activity and jpeg_activity into amdsmi_get_gpu_activity
+                engine_usage["vcn_activity"] = gpu_metric.get("vcn_activity", "N/A")
+                engine_usage["jpeg_activity"] = gpu_metric.get("jpeg_activity", "N/A")
+                engine_usage["gfx_busy_inst"] = "N/A"
+                engine_usage["jpeg_busy"] = "N/A"
+                engine_usage["vcn_busy"] = "N/A"
 
-                    # Use partition-scoped data when partition metrics were fetched.
-                    if gpu_partition_metrics is not None:
-                        xcp_gfx_busy = gpu_partition_metrics.get("xcp_stats.gfx_busy_inst", [])
-                        xcp_jpeg_busy = gpu_partition_metrics.get("xcp_stats.jpeg_busy", [])
-                        xcp_vcn_busy = gpu_partition_metrics.get("xcp_stats.vcn_busy", [])
+                # Use partition-scoped data when partition metrics were fetched.
+                if gpu_partition_metrics is not None:
+                    xcp_gfx_busy = gpu_partition_metrics.get("xcp_stats.gfx_busy_inst", [])
+                    xcp_jpeg_busy = gpu_partition_metrics.get("xcp_stats.jpeg_busy", [])
+                    xcp_vcn_busy = gpu_partition_metrics.get("xcp_stats.vcn_busy", [])
 
-                        if xcp_gfx_busy != "N/A" and isinstance(xcp_gfx_busy, list):
-                            new_xcp_dict = {}
-                            for xcp_idx, gfx_busy in enumerate(xcp_gfx_busy):
-                                new_xcp_dict[f"xcp_{xcp_idx}"] = (
-                                    list(gfx_busy) if isinstance(gfx_busy, list) else gfx_busy
-                                )
-                            engine_usage["gfx_busy_inst"] = new_xcp_dict
-
-                        if xcp_jpeg_busy != "N/A" and isinstance(xcp_jpeg_busy, list):
-                            new_xcp_dict = {}
-                            for xcp_idx, jpeg_busy in enumerate(xcp_jpeg_busy):
-                                new_xcp_dict[f"xcp_{xcp_idx}"] = (
-                                    list(jpeg_busy) if isinstance(jpeg_busy, list) else jpeg_busy
-                                )
-                            engine_usage["jpeg_busy"] = new_xcp_dict
-
-                        if xcp_vcn_busy != "N/A" and isinstance(xcp_vcn_busy, list):
-                            new_xcp_dict = {}
-                            for xcp_idx, vcn_busy in enumerate(xcp_vcn_busy):
-                                new_xcp_dict[f"xcp_{xcp_idx}"] = (
-                                    list(vcn_busy) if isinstance(vcn_busy, list) else vcn_busy
-                                )
-                            engine_usage["vcn_busy"] = new_xcp_dict
-                    elif num_partition != "N/A":
-                        # Socket-level metrics with partition support (existing behavior)
-                        for field in ("gfx_busy_inst", "jpeg_busy", "vcn_busy"):
-                            values = gpu_metric.get("xcp_stats." + field, "N/A")
-                            if isinstance(values, list):
-                                engine_usage[field] = {
-                                    f"xcp_{index}": value
-                                    for index, value in enumerate(values[:num_partition])
-                                }
-                    else:
-                        # On devices without XCP partitions (e.g. Navi), vcn_busy_percent
-                        # is available via sysfs; there is no equivalent sysfs for gfx_busy_inst
-                        # or jpeg_busy on these devices.
-                        try:
-                            engine_usage["vcn_busy"] = amdsmi_interface.amdsmi_get_vcn_busy_percent(
-                                args.gpu
+                    if xcp_gfx_busy != "N/A" and isinstance(xcp_gfx_busy, list):
+                        new_xcp_dict = {}
+                        for xcp_idx, gfx_busy in enumerate(xcp_gfx_busy):
+                            new_xcp_dict[f"xcp_{xcp_idx}"] = (
+                                list(gfx_busy) if isinstance(gfx_busy, list) else gfx_busy
                             )
-                        except amdsmi_exception.AmdSmiLibraryException as e:
-                            logging.debug(
-                                "Failed to get vcn busy percent for gpu %s | %s",
-                                gpu_id,
-                                e.get_error_info(),
+                        engine_usage["gfx_busy_inst"] = new_xcp_dict
+
+                    if xcp_jpeg_busy != "N/A" and isinstance(xcp_jpeg_busy, list):
+                        new_xcp_dict = {}
+                        for xcp_idx, jpeg_busy in enumerate(xcp_jpeg_busy):
+                            new_xcp_dict[f"xcp_{xcp_idx}"] = (
+                                list(jpeg_busy) if isinstance(jpeg_busy, list) else jpeg_busy
                             )
-                            engine_usage["vcn_busy"] = "N/A"
+                        engine_usage["jpeg_busy"] = new_xcp_dict
 
-                    logging.debug(f"After updates to engine_usage dictionary = {engine_usage}")
+                    if xcp_vcn_busy != "N/A" and isinstance(xcp_vcn_busy, list):
+                        new_xcp_dict = {}
+                        for xcp_idx, vcn_busy in enumerate(xcp_vcn_busy):
+                            new_xcp_dict[f"xcp_{xcp_idx}"] = (
+                                list(vcn_busy) if isinstance(vcn_busy, list) else vcn_busy
+                            )
+                        engine_usage["vcn_busy"] = new_xcp_dict
+                elif num_partition != "N/A":
+                    # Socket-level metrics with partition support (existing behavior)
+                    for field in ("gfx_busy_inst", "jpeg_busy", "vcn_busy"):
+                        values = gpu_metric.get("xcp_stats." + field, "N/A")
+                        if isinstance(values, list):
+                            engine_usage[field] = {
+                                f"xcp_{index}": value
+                                for index, value in enumerate(values[:num_partition])
+                            }
+                else:
+                    # On devices without XCP partitions (e.g. Navi), vcn_busy_percent
+                    # is available via sysfs; there is no equivalent sysfs for gfx_busy_inst
+                    # or jpeg_busy on these devices.
+                    try:
+                        engine_usage["vcn_busy"] = amdsmi_interface.amdsmi_get_vcn_busy_percent(
+                            args.gpu
+                        )
+                    except amdsmi_exception.AmdSmiLibraryException as e:
+                        logging.debug(
+                            "Failed to get vcn busy percent for gpu %s | %s",
+                            gpu_id,
+                            e.get_error_info(),
+                        )
+                        engine_usage["vcn_busy"] = "N/A"
 
-                    values_dict["usage"] = {
-                        key: "N/A"
-                        if usage_fields and value in ({}, [])
-                        else self._format_usage_value(value)
-                        for key, value in engine_usage.items()
-                    }
-                except amdsmi_exception.AmdSmiLibraryException as e:
-                    values_dict["usage"] = "N/A"
-                    logging.debug("Failed to get gpu activity for gpu %s | %s", gpu_id, e)
+                logging.debug(f"After updates to engine_usage dictionary = {engine_usage}")
+
+                values_dict["usage"] = {
+                    key: "N/A"
+                    if usage_fields and value in ({}, [])
+                    else self._format_usage_value(value)
+                    for key, value in engine_usage.items()
+                }
 
                 # APU-specific activity data
-                if show_apu and isinstance(values_dict.get("usage"), dict):
+                if show_apu:
                     apu_usage_fields = {
                         "apu_average_gfx_activity": gpu_metric.get(
                             "apu_metrics.average_gfx_activity", "N/A"
@@ -643,9 +640,7 @@ class MetricCommands:
                                     self.logger, value, activity_unit
                                 )
         if usage_fields:
-            usage_values = values_dict.get("usage", {})
-            if not isinstance(usage_values, dict):
-                usage_values = {}
+            usage_values = values_dict["usage"]
             values_dict["usage"] = {field: usage_values.get(field, "N/A") for field in usage_fields}
         if "power" in current_platform_args:
             if args.power:
@@ -2367,6 +2362,9 @@ class MetricCommands:
                     header.get("format_revision", "N/A"),
                     header.get("content_revision", "N/A"),
                 )
+            if usage_fields:
+                # Naming a field asks for it, so it prints as N/A rather than vanishing.
+                suppressed = suppressed - {("usage", field) for field in usage_fields}
             values_dict = amdsmi_metrics_field_support.filter_unsupported(
                 values_dict, suppressed, args.requested_metric_sections
             )
@@ -3102,13 +3100,6 @@ class MetricCommands:
         multiple_devices_csv_override = False
         if not self.logger.is_json_format():
             self.logger.store_cpu_output(args.cpu, "values", static_dict)
-            if (
-                "usage_fields" in vars(args)
-                and args.usage_fields
-                and args.watch
-                and self.logger.destination != "stdout"
-            ):
-                self.logger.watch_output.append(self.logger.output.copy())
         else:
             self.logger.store_cpu_json_output.append(static_dict)
         if multiple_devices:
@@ -3274,13 +3265,6 @@ class MetricCommands:
         multiple_devices_csv_override = False
         if not self.logger.is_json_format():
             self.logger.store_core_output(args.core, "values", static_dict)
-            if (
-                "usage_fields" in vars(args)
-                and args.usage_fields
-                and args.watch
-                and self.logger.destination != "stdout"
-            ):
-                self.logger.watch_output.append(self.logger.output.copy())
         else:
             self.logger.store_core_json_output.append(static_dict)
         if multiple_devices:
@@ -4205,11 +4189,4 @@ class MetricCommands:
                 gpu_board,
             )
         if self.logger.is_json_format():
-            selected_watch_file = (
-                "usage_fields" in vars(args)
-                and args.usage_fields
-                and self.logger.destination != "stdout"
-                and self.logger.watch_output
-            )
-            if not selected_watch_file:
-                self.logger.combine_arrays_to_json()
+            self.logger.combine_arrays_to_json()
