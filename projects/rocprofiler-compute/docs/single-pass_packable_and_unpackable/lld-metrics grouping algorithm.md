@@ -22,7 +22,7 @@ Why this allocator: the shipping pack minimizes passes for the whole counter lis
 
 **Locked decisions** (from the high-level design):
 
-- Default path is SPP packing. During migration, `ROCPROF_COMPUTE_PERFMON_LEGACY_HEURISTIC=1` or `ROCPROF_COMPUTE_PERFMON_SINGLE_PASS_PACKABLE=0` restores the shipping allocator.
+- SPP packing is the only allocate path.
 - Do **not** use `WEIGHTED_AVG` for former POLICY_GAP metrics (shipping multi-pass layouts that are SPP). Packing covers them.
 - Priority policy YAML is not required for the packable guarantee.
 - gfx942 offline packing gates: `packable_multi == 0`, passes ≈ **14**, SPU count == **16**, SPU extra passes == **0**. `packable_multi` counts SPP metrics whose PMC set is not fully inside one bucket. Panel 1805 stays one packing group in one pass (§3), so that gate includes it.
@@ -44,9 +44,7 @@ Overlap-first keeps the new counters in a pass that already has the rest of the 
 
 ```mermaid
 flowchart TD
-  A[Profile PMC set] --> B{LEGACY_HEURISTIC=1<br/>or SINGLE_PASS_PACKABLE=0?}
-  B -->|yes| SH[Legacy path:<br/>heuristic coalesce + first-fit]
-  B -->|no default| U[Unique SPP PMC sets<br/>skip SPU parents]
+  A[Profile PMC set] --> U[Unique SPP PMC sets<br/>skip SPU parents]
   U --> O[Order by size:<br/>largest PMC sets first]
   O --> L[Next SPP PMC set]
   L --> H{An existing bucket<br/>already holds that PMC set?}

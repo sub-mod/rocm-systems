@@ -12,6 +12,10 @@ import pandas as pd
 
 from utils.logger import console_debug, console_error, console_warning, demarcate
 from utils.metrics.aggregation import calc_pct_of_peak
+from utils.metrics.collectable import (
+    apply_composite_metrics,
+    cache_collectable_expressions,
+)
 from utils.metrics.common import ValuDualIssueDetector
 from utils.metrics.debug_row_tracker import DebugRowTracker, debug_row_tracker
 from utils.metrics.expression import build_eval_string
@@ -24,7 +28,6 @@ from utils.metrics.noise_clamper import (
 from utils.metrics.pass_provenance import (
     PassLayout,
     bind_metric_tables_to_passes,
-    legacy_pass_merge_enabled,
     ordered_scoped_builtin_bindings,
     pass_scoped_builtins,
 )
@@ -290,11 +293,7 @@ def eval_metric(
     ]
 
     used_passes: set[str] = set()
-    if (
-        pass_layout is not None
-        and pass_layout.has_duplicates
-        and not legacy_pass_merge_enabled()
-    ):
+    if pass_layout is not None and pass_layout.has_duplicates:
         gpu_series = mi_gpu_specs.get_gpu_series(sys_info["gpu_arch"])
         used_passes = bind_metric_tables_to_passes(
             dfs,
@@ -303,6 +302,9 @@ def eval_metric(
             gpu_series,
             frozenset(SUPPORTED_FIELD),
         )
+
+    # Cache collectable strings after binding so submetrics keep pass scope.
+    cache_collectable_expressions(dfs, dfs_type)
 
     builtin_vars = calc_builtin_vars(
         raw_pmc_df, sys_vars, sys_info["gpu_arch"], expressions
@@ -375,6 +377,15 @@ def eval_metric(
                 f"Variance corrected for metric: {row_id} {metric_name} {col}"
             )
         dfs[df_id].loc[row_id, col] = eval_result
+
+    apply_composite_metrics(
+        dfs,
+        dfs_type,
+        raw_pmc_df,
+        sys_vars,
+        empirical_peaks,
+        pass_layout=pass_layout,
+    )
 
     # Print aggregated summary of any noise clamping warnings
     print_noise_clamp_summary()

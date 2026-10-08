@@ -80,7 +80,7 @@ Same-pass bind is the analyze half of SPP, not its own class. A mixed GRBM + oth
 
 - Slot budgets are per hardware block, from `perfmon_config`. Copying a counter into a second pass is allowed when two PMC sets cannot share one bucket.
 - gfx942 is the reference count (408 / 374 / 358 / 16 / 34). Other arches use the same rules; their pass counts are a measurement, not a second design.
-- Until the cleanup in Phase 2b, three environment variables restore the old path: `ROCPROF_COMPUTE_PERFMON_LEGACY_HEURISTIC=1`, `ROCPROF_COMPUTE_PERFMON_SINGLE_PASS_PACKABLE=0`, `ROCPROF_COMPUTE_ANALYZE_LEGACY_PASS_MERGE=1`.
+- Single-pass packable and same-pass bind are the only profile and analyze path. Phase 2b removes the migration environment variables and the old allocator.
 
 Reported failures that this layout explains include [AIPROFCOMP-265](https://ontrack-internal.amd.com/browse/AIPROFCOMP-265) (CPC), [AIPROFCOMP-90](https://ontrack-internal.amd.com/browse/AIPROFCOMP-90) (L1 bandwidth above 100%), [AIPROFCOMP-268](https://ontrack-internal.amd.com/browse/AIPROFCOMP-268) (cache), [AIPROFCOMP-267](https://ontrack-internal.amd.com/browse/AIPROFCOMP-267) (TA/TD), [AIPROFCOMP-266](https://ontrack-internal.amd.com/browse/AIPROFCOMP-266) (Workgroup Manager utilization), and [ROCM-31864](https://ontrack-internal.amd.com/browse/ROCM-31864) (gfx950 L2-Fabric HBM / remote read traffic).
 
@@ -120,7 +120,7 @@ Priority is the order of delivery. Phase 1 is the packable set. Phase 2 is only 
 |----|-------------|
 | NFR-1 | gfx942 default profile stays near **14** passes (measured 14), against 12–13 today. The cost is extra replays of some counters, not a new counter set (still 274 PMCs). |
 | NFR-2 | SPU residual fill adds **0** passes on gfx942. Counters those 16 parents need are already in the Phase 1 layout. |
-| NFR-3 | SPP packing and same-pass bind are the default. The three environment variables in System Context are the rollback path during soak. |
+| NFR-3 | SPP packing and same-pass bind are the only path. Phase 2b removes the migration environment variables. |
 | NFR-4 | No silent analyze-time cap. A value above 100% is either intentional, a hardware defect, or a remaining SPU parent. |
 
 ### Guidelines
@@ -194,15 +194,14 @@ Offline check: `PYTHONPATH=src:tools python3 tools/eval_single_pass_packable.py 
 
 ### Phase 2b — legacy cleanup (separate change)
 
-After Phase 1 and Phase 2 are accepted, remove the migration-only paths in a **separate change**:
+After Phase 1 and Phase 2 are accepted, this change removes the migration-only paths:
 
-- Profile: drop `ROCPROF_COMPUTE_PERFMON_LEGACY_HEURISTIC` and `ROCPROF_COMPUTE_PERFMON_SINGLE_PASS_PACKABLE=0`, and the old heuristic allocator, once SPP is the only default.
-- Analyze: drop `ROCPROF_COMPUTE_ANALYZE_LEGACY_PASS_MERGE` and merged-pass analyze once same-pass bind is mandatory.
+- Profile: the old heuristic allocator. Single-pass packable is the only allocate path.
+- Analyze: merged-pass analyze. Same-pass bind is mandatory when a counter is copied across passes.
 - Dead priority-coalesce helpers that exist only for the pre-SPP layout.
-- The priority-tier sort in `_iter_metric_groups`. It still consults `_same_bucket_priority_metric_ids()`. SPP ignores that sort key and orders PMC sets largest-first.
+- The priority-tier sort in `iter_metric_groups`. SPP orders PMC sets largest-first.
 - Docs and tests that exercise only the escape hatches.
-
-Rollback via those environment variables stays available until this change lands.
+- The health-report legacy mode. The report still runs the default single-pass packable path. The median comparison tool that needed the old allocator is removed.
 
 ### Decisions and alternatives
 
@@ -238,18 +237,11 @@ Re-check the tickets listed under System Context after Phase 1, and again after 
 
 ### Debugging a bad ratio
 
-The failure mode is a wrong ratio, not a crash. Isolate it with the escape hatches:
-
-| Switch | Restores | Use when |
-|--------|----------|----------|
-| `ROCPROF_COMPUTE_PERFMON_LEGACY_HEURISTIC=1` or `ROCPROF_COMPUTE_PERFMON_SINGLE_PASS_PACKABLE=0` | Shipping allocator | The new pass layout is the suspect |
-| `ROCPROF_COMPUTE_ANALYZE_LEGACY_PASS_MERGE=1` | Merged-pass analyze | Same-pass bind is the suspect |
-
-Loaded frames keep `{counter}@pass:{key}`, so the pass an expression used is visible in the data. `eval_single_pass_packable.py` prints the offline gates without a GPU. There is no new trace or alert channel; the existing profile output plus these switches are the debug surface.
+The failure mode is a wrong ratio, not a crash. Loaded frames keep `{counter}@pass:{key}`, so the pass an expression used is visible in the data. `eval_single_pass_packable.py` prints the offline gates without a GPU. There is no new trace or alert channel; the existing profile output is the debug surface.
 
 ### Security
 
-No new privilege, network, or credential surface. Profile still launches the existing counter collector. The environment variables change layout and bind for the local process only.
+No new privilege, network, or credential surface. Profile still launches the existing counter collector.
 
 ---
 
